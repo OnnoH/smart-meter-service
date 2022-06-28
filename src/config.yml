@@ -1,0 +1,28 @@
+smart-meter:
+  name: Landis & Gyr E360
+  port: /dev/ttyUSB0
+  baudrate: 115200
+  bytesize: 8
+  stopbits: 1
+  parity: None
+
+telegram:
+  - label: daldag
+    code: 1-0:1.8.1
+  - label: piekdag
+    code: 1-0:1.8.2
+  - label: vermogen
+    code: 1-0:1.7.0
+
+mqtt:
+  host: localhost
+  port: 1883
+  name: Smart_Meter
+  protocol: MQTTv5
+
+
+
+api:
+  host: localhost
+  port: 5003
+
