@@ -70,19 +70,19 @@ def on_connect(client, userdata, flags, rc):
         logger.info("Connected as %s to MQTT Broker %s", client.name, client.broker)
     else:
         logger.error("Failed to connect to %s, return code %d", client.broker, rc)
-        sys.exit("Error while opening %s. Program aborted." % client.name)
+        sys.exit("Error while connecting %s. Service aborted." % client.name)
 
 
 def on_disconnect(client, userdata, flags, rc):
     if rc == 0:
-        logger.info("Disconnected as %s to MQTT Broker %s", client.name, client.broker)
+        logger.info("Disconnected %s from MQTT Broker %s", client.name, client.broker)
     else:
-        logger.error("Failed to connect to %s, return code %d", client.broker, rc)
-        sys.exit("Error while opening %s. Program aborted." % client.name)
+        logger.error("Failed to disconnect from %s, return code %d", client.broker, rc)
+        sys.exit("Error while disconnecting %s. Service aborted." % client.name)
 
 
 def on_message(client, userdata, msg):
-    logger.debug(msg.topic+" "+str(msg.payload))
+    logger.debug(msg.topic + " " + str(msg.payload))
 
 
 class MQTT:
@@ -96,22 +96,13 @@ class MQTT:
         self.broker = self.url + ':' + self.port
         self.topic = get_topic(config.get('topic'))
 
-        self.client = mqtt.Client(client_id=self.name, clean_session=self.clean_session, userdata=None, protocol=self.protocol, transport=self.transport)
+        self.client = mqtt.Client(client_id=self.name, clean_session=self.clean_session, userdata=None,
+                                  protocol=self.protocol, transport=self.transport)
         self.client.on_connect = on_connect
         self.client.on_disconnect = on_disconnect
         self.client.on_message = on_message
 
-
     def publish_telegram(self, telegram):
-        try:
-            self.client.connect(self.broker)
-            self.client.publish(self.topic, telegram)
-            self.client.disconnect()
-
-        except mqtt. as e:
-            self.serial.close()
-            logger.error("Error while opening %s. Program aborted." % self.name)
-            sys.exit("Error while opening %s. Program aborted." % self.name)
-        except TypeError as e:
-            self.serial.close()
-            sys.exit("Error while typing %s. Program aborted." % self.name)
+        self.client.connect(self.broker)
+        self.client.publish(self.topic, telegram)
+        self.client.disconnect()
